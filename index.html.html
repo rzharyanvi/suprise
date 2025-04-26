@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Love Confession</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Great+Vibes&family=Poppins:wght@400;700&display=swap');
+
+  /* Background gradient animation */
+  @keyframes gradientBG {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  body {
+    background: linear-gradient(-45deg, #ff9a9e, #fad0c4, #fad0c4, #ff9a9e);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Floating hearts animation */
+  .heart {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ff6f91;
+    transform: rotate(-45deg);
+    animation: floatUp linear infinite;
+    opacity: 0.8;
+    border-radius: 5px 5px 0 0;
+    filter: drop-shadow(0 0 2px #ff6f91);
+  }
+  .heart::before,
+  .heart::after {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: #ff6f91;
+    border-radius: 50%;
+  }
+  .heart::before {
+    top: -10px;
+    left: 0;
+  }
+  .heart::after {
+    left: 10px;
+    top: 0;
+  }
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) rotate(-45deg);
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(-600px) rotate(-45deg);
+      opacity: 0;
+    }
+  }
+
+  /* Shimmer effect on question */
+  @keyframes shimmer {
+    0% {
+      text-shadow: 0 0 10px #ff6f91, 0 0 20px #ff6f91;
+    }
+    50% {
+      text-shadow: 0 0 20px #ff6f91, 0 0 40px #ff6f91;
+    }
+    100% {
+      text-shadow: 0 0 10px #ff6f91, 0 0 20px #ff6f91;
+    }
+  }
+
+  .question {
+    margin-top: 80px;
+    font-size: 4rem;
+    font-family: 'Great Vibes', cursive;
+    animation: shimmer 3s ease-in-out infinite;
+    user-select: none;
+    position: relative;
+    z-index: 10;
+  }
+
+  .buttons-container {
+    position: relative;
+    width: 100%;
+    height: 180px;
+    margin-bottom: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 120px;
+    z-index: 10;
+  }
+
+  button {
+    background: linear-gradient(45deg, #ff6f91, #ff9472);
+    border: none;
+    padding: 20px 70px;
+    font-size: 1.6rem;
+    border-radius: 50px;
+    cursor: pointer;
+    color: white;
+    box-shadow: 0 0 15px #ff6f91;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: absolute;
+    user-select: none;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+    text-shadow: 0 0 5px #fff;
+  }
+  button:hover {
+    animation: glowPulse 1.5s infinite alternate;
+    transform: scale(1.15);
+    box-shadow: 0 0 40px #ff6f91, 0 0 60px #ff9472;
+  }
+  @keyframes glowPulse {
+    0% {
+      box-shadow: 0 0 20px #ff6f91, 0 0 30px #ff9472;
+    }
+    100% {
+      box-shadow: 0 0 40px #ff6f91, 0 0 60px #ff9472;
+    }
+  }
+
+  #yesBtn {
+    left: 30%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+  #noBtn {
+    left: 70%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: left 0.5s ease, top 0.5s ease;
+  }
+
+  /* Popup styles */
+  .popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background: #ff6f91;
+    padding: 60px 90px;
+    border-radius: 40px;
+    box-shadow: 0 0 60px #ff6f91;
+    color: white;
+    font-size: 1rem;
+    text-align: center;
+    z-index: 1000;
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55), opacity 0.6s ease;
+    user-select: none;
+    opacity: 0;
+  }
+  .popup.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(29, 43, 100, 0.85);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease;
+    z-index: 900;
+  }
+  .overlay.show {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Confetti styles */
+  .confetti {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    background-color: #ff6f91;
+    opacity: 0.9;
+    z-index: 1100;
+    pointer-events: none;
+    transform-origin: center;
+    border-radius: 3px;
+    animation: confetti-fall 3s linear forwards;
+  }
+  @keyframes confetti-fall {
+    0% {
+      transform: translateY(0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(600px) rotate(360deg);
+      opacity: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="question">Do you love me?</div>
+  <div class="buttons-container" id="buttonsContainer">
+    <button id="yesBtn">Yes</button>
+    <button id="noBtn">No</button>
+  </div>
+
+  <div class="popup" id="popup">"From this moment, every heartbeat of mine beats for us. 💖"</div>
+  <div class="overlay" id="overlay"></div>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const yesBtn = document.getElementById('yesBtn');
+    const popup = document.getElementById('popup');
+    const overlay = document.getElementById('overlay');
+    const buttonsContainer = document.getElementById('buttonsContainer');
+
+    // Create floating hearts randomly
+    function createHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.style.left = Math.random() * window.innerWidth + 'px';
+      heart.style.bottom = '-20px';
+      heart.style.animationDuration = 4 + Math.random() * 3 + 's';
+      heart.style.opacity = Math.random();
+      document.body.appendChild(heart);
+      setTimeout(() => {
+        heart.remove();
+      }, 7000);
+    }
+    setInterval(createHeart, 400);
+
+    // Function to move the No button to a random position within the buttons container
+    function moveNoButton() {
+      const containerRect = buttonsContainer.getBoundingClientRect();
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+
+      // Calculate random position within container boundaries
+      const maxX = containerRect.width - btnWidth;
+      const maxY = containerRect.height - btnHeight;
+
+      const randomX = Math.floor(Math.random() * maxX);
+      const randomY = Math.floor(Math.random() * maxY);
+
+      noBtn.style.left = randomX + 'px';
+      noBtn.style.top = randomY + 'px';
+      noBtn.style.transform = 'translate(0, 0)';
+    }
+
+    noBtn.addEventListener('click', () => {
+      moveNoButton();
+    });
+
+    // Confetti burst on Yes click
+    function createConfetti() {
+      const colors = ['#ff6f91', '#ff9472', '#f9c5d1', '#ffb3c1', '#ff8fa3'];
+      for (let i = 0; i < 30; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = Math.random() * window.innerHeight / 2 + 'px';
+        confetti.style.animationDuration = 2 + Math.random() * 2 + 's';
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => {
+          confetti.remove();
+        }, 4000);
+      }
+    }
+
+    yesBtn.addEventListener('click', () => {
+      popup.classList.add('show');
+      overlay.classList.add('show');
+      createConfetti();
+    });
+
+    // Close popup when clicking outside
+    overlay.addEventListener('click', () => {
+      popup.classList.remove('show');
+      overlay.classList.remove('show');
+    });
+  </script>
+</body>
+</html>
